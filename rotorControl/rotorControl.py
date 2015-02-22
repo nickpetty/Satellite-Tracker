@@ -40,17 +40,17 @@ class AntennaController:
 		if targetEV in range(0,90): # Assuming there is only 90 degrees of elevation from the current Azimuth
 			if targetEV < self.currentEV:
 				degreeDiff = self.currentEV - targetEV
-				dirc = 'ccw'
+				dirc = 'cw'
 				steps = int(round(degreeDiff/.9))
-				print 'lower (ccw) for ' + str(steps) + ' steps from ' + str(int(self.currentEV)) + ' to ' + str(int(targetEV))
+				print 'lower (cw) for ' + str(steps) + ' steps from ' + str(int(self.currentEV)) + ' to ' + str(int(targetEV))
 				# self.rotator.write('EB'+str(steps)) # 'E' - elevation, 'B' - ccw
 				self.currentEV = targetEV
 
 			if targetEV > self.currentEV:
 				degreeDiff = targetEV - self.currentEV
-				dirc = 'cw'
+				dirc = 'ccw'
 				steps = int(round(degreeDiff/.9))
-				print 'raise (cw) for ' + str(steps) + ' steps from ' + str(int(self.currentEV)) + ' to ' + str(int(targetEV))
+				print 'raise (ccw) for ' + str(steps) + ' steps from ' + str(int(self.currentEV)) + ' to ' + str(int(targetEV))
 				# self.rotator.write('EF'+str(steps)) # 'E' - elevation, 'F' - cw
 				self.currentEV = targetEV
 

@@ -1,13 +1,15 @@
 import time
 from rotorControl import AntennaController
 from satTracker import SatTracker
+import numpy as np
+
 
 antenna = AntennaController('com1')
 
 # homeLat, homeLon, homeEv, TLELine1, TLELine2, TLELine3
-tracker = SatTracker(35.0500, -89.9848, 86, 'ISS (ZARYA)',            
-'1 25544U 98067A   15051.80472707  .00012522  00000-0  18963-3 0  9999',
-'2 25544  51.6466 305.2870 0005813  27.4514  81.5032 15.55046614929922')
+tracker = SatTracker(35.90631, -90.06496, 80, 'ISS (ZARYA)',            
+'1 25544U 98067A   15052.82955662  .00014550  00000-0  21887-3 0  9990',
+'2 25544 051.6465 300.1701 0005835 032.8359 057.1592 15.55079649930082')
 
 sat = tracker.track()
 
@@ -15,7 +17,7 @@ sat = tracker.track()
 print 'Moving antenna to position...'
 antenna.setAz(round(sat['az'])) # set az from 0 to current az
 antenna.setEv(abs(round(sat['ev']))) # set ev form 0 to current ev
-time.sleep(20) # give time to get to position form zero
+time.sleep(1) # give time to get to position form zero
 print 'Now tracking'
 
 
