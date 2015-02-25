@@ -31,10 +31,10 @@ class SatTracker:
 		#print datetime.utcnow()
 		self.home.date = datetime.utcnow()
 		self.iss.compute(self.home)
-		#print self.iss.sublat
-		#print self.iss.sublong
+		lat = self.iss.sublat * self.degrees_per_radian
+		lng = self.iss.sublong * self.degrees_per_radian
 		az = self.iss.az * self.degrees_per_radian
 		print az
 		ev = self.iss.alt * self.degrees_per_radian
 		print ev
-		return {'az':az, 'ev':ev}
+		return {'az':az, 'ev':ev, 'lat':lat, 'lng':lng}

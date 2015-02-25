@@ -1,0 +1,115 @@
+<html>
+
+<head>
+	<title>Satellite Tracker</title>
+	<style>
+    	html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+        }
+    </style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script>
+
+		function startSatStream(){
+			sse = new EventSource('/streamSatData');
+			sse.onmessage = function(message) {
+				data = JSON.parse(message.data);
+				$('#lat').text(data.lat);
+				$('#lng').text(data.lng);
+				$('#az').text(data.az);
+				$('#ev').text(data.ev);
+				moveMarker(data.lat, data.lng);
+			};			
+		};
+
+		function getData(){
+			var group = satGroups.options[satGroups.selectedIndex].text;
+			var sat = tles.options[tles.selectedIndex].text;
+			var tle = groupData[0][group][sat];			
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET", '/tle/' + group + '/' + sat, true);
+			xmlhttp.send();
+		};
+
+
+		var groupData = [{{ groups|safe }}];
+		var groups = Object.keys(groupData[0]);	
+			
+		function loadSats(){
+			var select = document.getElementById("tles");
+			while (select.options.length > 0) { 
+				select.options.remove(0); 
+			};
+			var selectedGroup = satGroups.options[satGroups.selectedIndex].text;
+			var sats = Object.keys(groupData[0][selectedGroup])
+			var tles = document.getElementById("tles");
+			updateList(tles, sats);
+		};
+
+		function updateList(listID, options) {
+			for (var i=0; i < options.length; i++) {
+				var opt = options[i];
+				var el = document.createElement("option");
+				el.textContent = opt;
+				el.value = opt;
+				listID.appendChild(el);
+			};
+		};
+
+	</script>
+
+</head>
+
+<body>
+	
+	<select id='satGroups' onchange='loadSats()'></select>
+	<select id='tles' onchange='getData()'></select>
+	<br>
+	<ol>
+		<li>Lat: <span id='lat'></span></li>
+		<li>Lng: <span id='lng'></span></li>
+		<li>AZ: <span id='az'></span></li>
+		<li>EV: <span id='ev'></span></li>
+	</ol>
+
+	<script>
+		var satGroups = document.getElementById("satGroups");
+		updateList(satGroups, groups);
+		loadSats();
+		getData();
+		startSatStream();	
+	</script>
+
+	<div id='map-canvas'></div>
+
+	<script>
+			var map, marker;
+		function initialize() {
+		    
+		    var myLatLng = new google.maps.LatLng( 50, 50 ),
+		        myOptions = {
+		            zoom: 3,
+		            center: myLatLng,
+		            mapTypeId: google.maps.MapTypeId.ROADMAP
+		            };
+		    map = new google.maps.Map( document.getElementById( 'map-canvas' ), myOptions ),
+		    marker = new google.maps.Marker( {position: myLatLng, map: map} );
+		    
+		    marker.setMap( map );
+		    moveMarker(50, 50);
+		    
+		};
+
+		function moveMarker(lat, lng) {
+		        marker.setPosition( new google.maps.LatLng( lat, lng ) );
+		        map.panTo( new google.maps.LatLng( lat, lng ));
+		};
+		initialize();
+	</script>
+
+</body>
+
+</html>
